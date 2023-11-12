@@ -6,6 +6,14 @@ def fare_price(distance, different_regions, hubs_in_dest_region):
 
 
 class Station:
+    def __init__(self, name, region, CRS, coords_lat, coords_long, hub):
+        self.name = name
+        self.region = region
+        self.CRS = CRS
+        self.coords_lat = coords_lat
+        self.coords_long = coords_long
+        self.hub = hub
+
     def distance_to(self):
         raise NotImplementedError
 
