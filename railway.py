@@ -6,13 +6,14 @@ def fare_price(distance, different_regions, hubs_in_dest_region):
 
 
 class Station:
-    def __init__(self, CRS, name, coords_lat, coords_long, region, hub):
-        self.CRS = CRS
+    def __init__(self, name, region, crs, lat, lon, hub):
         self.name = name
-        self.coords_lat = coords_lat
-        self.coords_long = coords_long
-        self.region = region
+        self.region = region                
+        self.crs = crs
+        self.lat = lat
+        self.lon = lon
         self.hub = hub
+
 
     def distance_to(self):
         raise NotImplementedError
@@ -21,13 +22,14 @@ class Station:
 class RailNetwork:
     def __init__(self, network_stations):
         self.network_stations = network_stations
-
+       
 
     def regions(self):
         raise NotImplementedError
 
     def n_stations(self):
-        raise NotImplementedError
+        n_stations = len(self.network_stations)
+        return n_stations
 
     def hub_stations(self, region):
         raise NotImplementedError
