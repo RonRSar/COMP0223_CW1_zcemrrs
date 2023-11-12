@@ -9,7 +9,7 @@ def read_rail_network(filepath):
     assert isinstance(filepath, Path) , 'data type incorrect for filepath'
 
     reader = open(filepath, newline='')
-    stations = csv.reader(reader)
+    stations = csv.reader(reader, delimiter=',')
 
     stations_list = list(stations) #making into list as csv.reader is not iterable
 

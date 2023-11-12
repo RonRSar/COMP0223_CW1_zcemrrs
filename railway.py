@@ -20,20 +20,20 @@ class Station:
 
 
 class RailNetwork:
-    def __init__(self, network_stations):
-        self.network_stations = network_stations
+    def __init__(self, stations):
+        self.stations = stations
        
 
     def regions(self):
         region_list = []
-        for k in range(int(len(self.network_stations))):
-            region_list.append(str(self.network_stations[k].region))
+        for k in range(int(len(self.stations))):
+            region_list.append(str(self.stations[k].region))
 
         unique_regions = list(set(region_list))
         return unique_regions
 
     def n_stations(self):
-        n_stations = int(len(self.network_stations))
+        n_stations = int(len(self.stations))
         return n_stations
 
     def hub_stations(self, region):
