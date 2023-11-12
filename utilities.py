@@ -16,7 +16,7 @@ def read_rail_network(filepath):
     network_stations = []
     for row in stations_list[1:]: # 0th element is header
         CRS, Name, Coords_lat, Coords_long, Region, Hub = [cell for cell in zip(row)]
-        network_stations.append(Station(name=Name, region=Region, crs=CRS, lat=Coords_lat, lon=Coords_long))
+        network_stations.append(Station(name=Name, region=Region, crs=CRS, lat=Coords_lat, lon=Coords_long, hub=Hub))
         
     rail_network = RailNetwork(network_stations)
 
