@@ -28,7 +28,7 @@ class RailNetwork:
         raise NotImplementedError
 
     def n_stations(self):
-        n_stations = len(self.network_stations)
+        n_stations = int(len(self.network_stations))
         return n_stations
 
     def hub_stations(self, region):
