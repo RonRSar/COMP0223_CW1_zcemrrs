@@ -25,7 +25,12 @@ class RailNetwork:
        
 
     def regions(self):
-        raise NotImplementedError
+        region_list = []
+        for k in range(int(len(self.network_stations))):
+            region_list.append(str(self.network_stations[k].region))
+
+        unique_regions = list(set(region_list))
+        return unique_regions
 
     def n_stations(self):
         n_stations = int(len(self.network_stations))
