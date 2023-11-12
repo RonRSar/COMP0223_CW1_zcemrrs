@@ -10,9 +10,22 @@ class Station:
         self.name = name
         self.region = region                
         self.crs = crs
-        self.lat = lat
-        self.lon = lon
+        self.lat = float(lat)
+        self.lon = float(lon)
         self.hub = hub
+
+        #Verify type
+        assert isinstance(self.name, str), 'data type incorrect for Station name, expected str'
+        assert isinstance(self.region, str), 'data type incorrect for Station region, expected str'
+        assert isinstance(self.crs, str), 'data type incorrect for Station CRS, expected str'
+        assert isinstance(self.lat, float), 'data type incorrect for Latitude, expected numeric'
+        assert isinstance(self.lon, float), 'data type incorrect for Longitude, expected numeric'
+
+        #Verify Correct values
+        assert len(self.crs) == 3, 'CRS is incorrect length, expected 3 letters'
+        assert -90 <= self.lat <= 90 , 'Latitude is not in -90 to 90 range'
+        assert -180 <= self.lon <= 180, 'Longitude is not in -180 to 180 range'
+        assert hub == 0 or hub == 1, 'input incorrect for hub, expected 0 or 1'        
 
 
     def distance_to(self):
