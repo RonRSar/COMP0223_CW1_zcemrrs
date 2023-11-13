@@ -34,15 +34,21 @@ class Station:
             return f'Station({self.crs}-{self.name}/{self.region})'
         else:
             return f'Station({self.crs}-{self.name}/{self.region}-hub)'
+        
+    def __repr__(self):
+        if int(self.hub) == 0:
+            return f'Station({self.crs}-{self.name}/{self.region})'
+        else:
+            return f'Station({self.crs}-{self.name}/{self.region}-hub)'
 
 
     def distance_to(self, other_station):
-        lat_dif = (self.lat - other_station.lat)*0.5
-        lon_dif = (self.lon - other_station.lon)*0.5
-        k_1 = (math.sin(lat_dif))**2 + math.cos(self.lat)*math.cos(other_station.lat)*(math.sin(lon_dif))**2
-        k_2 = math.sqrt(k_1)
+        #splitting equation for easier readability and error checking
+        lat_dif = (other_station.lat - self.lat)*0.5
+        lon_dif = (other_station.lon - self.lon)*0.5
+        k_1 = math.sqrt((math.sin(lat_dif))**2 + ((math.cos(self.lat)*math.cos(other_station.lat))*(math.sin(lon_dif))**2))
         R = 6371
-        distance = abs(2*R*math.asin(k_2))
+        distance = abs(2*R*math.asin(k_1)) #abs to prevent negative distances
         return distance
 
 
@@ -79,12 +85,25 @@ class RailNetwork:
         n_stations = int(len(self.stations))
         return n_stations
 
-    def hub_stations(self, region):
-        raise NotImplementedError
+    def hub_stations(self, region='all'):
+
+        #verify region is string
+        assert isinstance(region,str), 'data type incorrect for region, expected str'
+
+        hub_stations = {}
+
+        for key in self.stations.keys():
+            if float(self.stations[key].hub) == 1: 
+                hub_stations.setdefault(self.stations[key].region, []).append(self.stations[key])
+
+        if region == 'all': #default value
+            return hub_stations.values()
+        else:
+            return hub_stations[region] #to do: add case where region implemented isn't in list
 
     def closest_hub(self, s):
         raise NotImplementedError
-
+    
     def journey_planner(self, start, dest):
         raise NotImplementedError
 
