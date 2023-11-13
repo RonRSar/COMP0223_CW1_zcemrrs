@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import math 
 
 
 def fare_price(distance, different_regions, hubs_in_dest_region):
@@ -35,8 +36,14 @@ class Station:
             return f'Station({self.crs}-{self.name}/{self.region}-hub)'
 
 
-    def distance_to(self):
-        raise NotImplementedError
+    def distance_to(self, other_station):
+        lat_dif = (self.lat - other_station.lat)*0.5
+        lon_dif = (self.lon - other_station.lon)*0.5
+        k_1 = (math.sin(lat_dif))**2 + math.cos(self.lat)*math.cos(other_station.lat)*(math.sin(lon_dif))**2
+        k_2 = math.sqrt(k_1)
+        R = 6371
+        distance = abs(2*R*math.asin(k_2))
+        return distance
 
 
 class RailNetwork:
