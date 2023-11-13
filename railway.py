@@ -25,7 +25,14 @@ class Station:
         assert len(self.crs) == 3, 'CRS is incorrect length, expected 3 letters'
         assert -90 <= self.lat <= 90 , 'Latitude is not in -90 to 90 range'
         assert -180 <= self.lon <= 180, 'Longitude is not in -180 to 180 range'
-        assert hub == 0 or hub == 1, 'input incorrect for hub, expected 0 or 1'        
+        assert int(hub) == 0 or int(hub) == 1, 'input incorrect for hub, expected 0 or 1' 
+ 
+
+    def __str__(self):
+        if int(self.hub) == 0:
+            return f'Station({self.crs}-{self.name}/{self.region})'
+        else:
+            return f'Station({self.crs}-{self.name}/{self.region}-hub)'
 
 
     def distance_to(self):
