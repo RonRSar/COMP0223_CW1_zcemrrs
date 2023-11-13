@@ -100,7 +100,7 @@ class RailNetwork:
                 hub_stations.setdefault(self.stations[key].region, []).append(self.stations[key])
 
         if region == 'all': #default value
-            return hub_stations.values()
+            return hub_stations
         else:
             return hub_stations[region] #to do: add case where region implemented isn't in list
 
@@ -196,13 +196,36 @@ class RailNetwork:
         
 
 
-    def plot_fares_to(self, crs_code, save, ADDITIONAL_ARGUMENTS):
+    def plot_fares_to(self, crs_code, save, **args):
         """
-        A function to plot_fares_to
+        A function for plot_fares_to
+        takes crs_code as input and produces histogram of fare prices from all other stations
+        save is true for image to be saved locally to computer
+        **args are used for the hist plot
         """
-        fig, ax = plt.subplots(figsize=(5,10))
+        fares = []
+        for station in self.stations.values(): 
+            if crs_code != station.crs: #ensure not checking self
+                if [station.region in self.hub_stations()]: #ensure station can be travelled to
+                    fares.append(self.journey_fare(crs_code, station.crs))
+                continue
+            continue
+        
+        station_name = self.stations[crs_code].name.replace(" ", "_")
+        plt.title(f"Fare price to {station_name}")
+        plt.xlabel("Fare price (Pound)")
 
+        if args != None: 
+            plt.hist(fares, **args)
+        else:
+            plt.hist(fares)
 
+        if save:
+            plt.savefig(f"./Fare_price_to_{station_name}.png")
+        
+        plt.show()
+        
+        return
 
     def plot_network(self, marker_size: int = 5) -> None:
         """
