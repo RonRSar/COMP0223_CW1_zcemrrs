@@ -36,7 +36,7 @@ class Station:
         else:
             return f'Station({self.crs}-{self.name}/{self.region}-hub)'
         
-    def __repr__(self):
+    def __repr__(self): #same as __str__ 
         if int(self.hub) == 0:
             return f'Station({self.crs}-{self.name}/{self.region})'
         else:
@@ -81,7 +81,7 @@ class RailNetwork:
         for key in self.stations.keys():
             region_list.append(str(self.stations[key].region))
 
-        unique_regions = list(set(region_list))
+        unique_regions = list(set(region_list)) #set finds unique regions in list
         return unique_regions
 
     def n_stations(self):
@@ -111,8 +111,8 @@ class RailNetwork:
             dist = station.distance_to(s)
             if dist <= min: #if equidistant then alphabetical
                 min = dist
-                if min == 0: #todo: floating point error
-                    print ('Station is already hub')
+                #if min == 0: #todo: floating point error
+                #   continue: #station is already hub
                 closest_hub = station
             elif min == 1e7:
                 closest_hub = []
@@ -142,20 +142,43 @@ class RailNetwork:
         return journey
         
 
-    def journey_fare(self, start, dest, summary):
+    def journey_fare(self, start, dest, summary=False):
 
-        distance = self.stations[start].distance_to(self.stations[dest])
-        if self.stations[start].region == self.stations[dest].region:
-            different_regions = 0
-        else:
-            different_regions = 1
-        hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
+        journey = self.journey_planner(start, dest)
+        journey_fare = 0
+        if len(journey) == 2: # for simple 2 leg case
+            distance = self.stations[start].distance_to(self.stations[dest])
+            if self.stations[start].region == self.stations[dest].region:
+                different_regions = 0
+            else:
+                different_regions = 1
+            hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
+            journey_fare += fare_price(distance, different_regions, hubs_in_dest_region)
+
+        if len(journey) >= 3: # for 3-4 leg case, selection structure instead of for loop for ease of visualisation
+            distance = self.stations[start].distance_to(self.closest_hub(self.stations[start]))
+            hubs_in_dest_region = len(self.hub_stations(self.closest_hub(self.stations[start]).region))
+            journey_fare += fare_price(distance, 0, hubs_in_dest_region)
+
+            if self.closest_hub(self.stations[start]).region == self.stations[dest].region: # 3 leg case
+                distance = self.closest_hub(self.stations[start]).distance_to(self.stations[dest])
+                hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
+                journey_fare += fare_price(distance, 0, hubs_in_dest_region)
+
+            elif self.closest_hub(self.stations[start]).region != self.stations[dest].region: # 4 leg case
+                distance = self.closest_hub(self.stations[start]).distance_to(self.closest_hub(self.stations[dest]))
+                #dr is 1
+                hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region)) #hub in dest region is same region as dest
+                journey_fare += fare_price(distance, 1, hubs_in_dest_region)
+                distance = self.closest_hub(self.stations[dest]).distance_to(self.stations[dest])
+                #dr is 0
+                hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
+                journey_fare += fare_price(distance, 0, hubs_in_dest_region)
         
-        journey_fare = fare_price(distance, different_regions, hubs_in_dest_region)
+
 
 
         if summary == True: 
-            journey = self.journey_planner(start, dest)
             journey_disp = ""
 
             for i in range(len(journey)):
@@ -174,7 +197,12 @@ class RailNetwork:
 
 
     def plot_fares_to(self, crs_code, save, ADDITIONAL_ARGUMENTS):
-        raise NotImplementedError
+        """
+        A function to plot_fares_to
+        """
+        fig, ax = plt.subplots(figsize=(5,10))
+
+
 
     def plot_network(self, marker_size: int = 5) -> None:
         """
