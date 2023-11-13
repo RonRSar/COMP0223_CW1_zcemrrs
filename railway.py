@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import math 
-import numpy as np
 
 
 def fare_price(distance, different_regions, hubs_in_dest_region):
-    raise NotImplementedError
+    fare_price = 1 + distance*math.exp(-distance/100)*(1+(different_regions*hubs_in_dest_region)/10)
+    return fare_price
 
 
 class Station:
@@ -111,6 +111,8 @@ class RailNetwork:
             dist = station.distance_to(s)
             if dist <= min: #if equidistant then alphabetical
                 min = dist
+                if min == 0: #todo: floating point error
+                    print ('Station is already hub')
                 closest_hub = station
             elif min == 1e7:
                 closest_hub = []
@@ -120,10 +122,56 @@ class RailNetwork:
 
     
     def journey_planner(self, start, dest):
-        raise NotImplementedError
+        '''
+        start, dest = crs inputs
+        returns list of stations in journey'''
+        start_closest_hub = self.closest_hub(self.stations[start])
+        end_closest_hub = self.closest_hub(self.stations[dest]) 
+
+        journey = []
+        journey.append(self.stations[start])
+
+        if start_closest_hub != self.stations[start] and start_closest_hub.region != end_closest_hub.region:
+            journey.append(start_closest_hub)
+   
+        if end_closest_hub != self.stations[dest] and end_closest_hub.region != start_closest_hub.region:
+            journey.append(end_closest_hub)
+
+        journey.append(self.stations[dest]) 
+
+        return journey
+        
 
     def journey_fare(self, start, dest, summary):
-        raise NotImplementedError
+
+        distance = self.stations[start].distance_to(self.stations[dest])
+        if self.stations[start].region == self.stations[dest].region:
+            different_regions = 0
+        else:
+            different_regions = 1
+        hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
+        
+        journey_fare = fare_price(distance, different_regions, hubs_in_dest_region)
+
+
+        if summary == True: 
+            journey = self.journey_planner(start, dest)
+            journey_disp = ""
+
+            for i in range(len(journey)):
+                if i == len(journey) - 1 or i == 0: #for start and dest
+                    journey_disp += journey[i].crs
+                else:
+                    journey_disp += f'{journey[i].name} ({journey[i].crs})' #for expanding inbetween stations
+                if i != len(journey) - 1: #for entering arrows 
+                    journey_disp += ' -> '
+
+            return f"Journey from: {self.stations[start].name} ({start}) to {self.stations[dest].name} ({dest})\n" f"Route: {journey_disp} \n" f"Fare: £{round(journey_fare, 2)}"
+        else:
+            return journey_fare
+        
+        
+
 
     def plot_fares_to(self, crs_code, save, ADDITIONAL_ARGUMENTS):
         raise NotImplementedError
