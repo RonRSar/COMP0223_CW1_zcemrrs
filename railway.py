@@ -35,7 +35,20 @@ class Station:
 class RailNetwork:
     def __init__(self, stations):
         self.stations = stations
-       
+
+        keys = []
+        for row in range(int(len(self.stations))):
+            keys.append(self.stations[row].crs)
+        assert len(keys) == len(set(keys)), 'There are duplicate CRS values, no stations can have the same identifier.'
+
+        stations_dict = {}
+        count = 0
+        for station in self.stations:
+            stations_dict[keys[count]] = station
+            count += 1
+
+        self.stations = stations_dict    
+
 
     def regions(self):
         region_list = []
