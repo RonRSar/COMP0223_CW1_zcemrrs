@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import math 
+import numpy as np
 
 
 def fare_price(distance, different_regions, hubs_in_dest_region):
@@ -104,7 +105,19 @@ class RailNetwork:
             return hub_stations[region] #to do: add case where region implemented isn't in list
 
     def closest_hub(self, s):
-        raise NotImplementedError
+        hubs_in_region = self.hub_stations(s.region)
+        min = 1e7
+        for station in hubs_in_region:
+            dist = station.distance_to(s)
+            if dist <= min: #if equidistant then alphabetical
+                min = dist
+                closest_hub = station
+            elif min == 1e7:
+                closest_hub = []
+                print('No hub in region')
+
+        return closest_hub
+
     
     def journey_planner(self, start, dest):
         raise NotImplementedError
