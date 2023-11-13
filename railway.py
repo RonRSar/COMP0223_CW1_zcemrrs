@@ -46,7 +46,9 @@ class Station:
         #splitting equation for easier readability and error checking
         lat_dif = (other_station.lat - self.lat)*0.5
         lon_dif = (other_station.lon - self.lon)*0.5
-        k_1 = math.sqrt((math.sin(lat_dif))**2 + ((math.cos(self.lat)*math.cos(other_station.lat))*(math.sin(lon_dif))**2))
+        #multiplying by 180/pi to convert from radian to degrees
+        k_1 = math.sqrt((math.sin(lat_dif*180/math.pi))**2 + 
+                        ((math.cos(self.lat*180/math.pi)*math.cos(other_station.lat*180/math.pi))*(math.sin(lon_dif*180/math.pi))**2))
         R = 6371
         distance = abs(2*R*math.asin(k_1)) #abs to prevent negative distances
         return distance
