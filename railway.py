@@ -55,8 +55,8 @@ class RailNetwork:
 
     def regions(self):
         region_list = []
-        for k in range(int(len(self.stations))):
-            region_list.append(str(self.stations[k].region))
+        for key in self.stations.keys():
+            region_list.append(str(self.stations[key].region))
 
         unique_regions = list(set(region_list))
         return unique_regions
