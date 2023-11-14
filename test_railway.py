@@ -78,24 +78,47 @@ def test_distance_to_duplicate():
 
    assert station_1.distance_to(station_2) == 0.
 
-# ∘ Tests for RailNetwork simple information functions (3 marks)
+# [Done] Tests for RailNetwork simple information functions (3 marks)
+
+#set up a miscellaneous network with managable data
 abbey_wood = Station('Abbey Wood', 'London', 'ABW', 51.490719, 0.120343, 0)
 aberdeen = Station('Aberdeen', 'Scotland','ABD', 57.143127, -2.097464, 1)
 acton_central = Station('Acton Central', 'London', 'ACC', 57.143127, -2.097464, 0)
 kirkcaldy = Station('Kirkcaldy','Scotland','KDY', 56.112579, -3.167445, 0)
 kings_cross = Station('London Kings Cross', 'London', 'KGX',51.530827, -0.122907, 1)
+ystrad_rhondda = Station('Ystrad Rhondda','Wales','YSR',51.644478,-3.47557, 0)
 
-misc_network = RailNetwork([abbey_wood, aberdeen, acton_central, kirkcaldy, kings_cross])
+misc_network = RailNetwork([abbey_wood, aberdeen, acton_central, kirkcaldy, kings_cross, ystrad_rhondda])
 
 def test_rail_regions():
-   assert len(misc_network.regions()) == 2
+   assert len(misc_network.regions()) == 3
 
 def test_rail_station_number():
-   assert misc_network.n_stations() == 5
+   assert misc_network.n_stations() == 6
 
 # ∘ Tests for the hub_stations and closest_hub methods (4 marks)
 
+def test_rail_hub_stations():
+   assert len(misc_network.hub_stations()) == 2
 
+def test_rail_hubs_wrong_region_type():
+   with raises(TypeError, match='data type incorrect for region, expected str'):
+      misc_network.hub_stations(2)
+
+def test_rail_hubs_wrong_region():
+   with raises(KeyError):
+      misc_network.hub_stations('test')
+
+def test_closest_hub():
+   assert misc_network.closest_hub(kirkcaldy) == aberdeen #only 2 stations in Scotland so must be closest
+
+def test_closest_hub_no_hubs():
+   with raises(KeyError):
+      misc_network.closest_hub(ystrad_rhondda) #no other stations in Wales, error is in earlier funcion already
+
+def test_closest_hub_for_hub():
+   assert misc_network.closest_hub(aberdeen) == aberdeen #closest hub to hub is itself
+ 
 # ∘ Tests for the journey_planner and journey_fare methods (6 marks)
 
 

@@ -62,7 +62,7 @@ class Station:
 
         if self == other_station:
             distance = 0 #account for case where stations are the same, but don't flag error
-            
+
         return distance
 
 
@@ -111,7 +111,7 @@ class RailNetwork:
         '''
 
         #verify region is string
-        assert isinstance(region,str), 'data type incorrect for region, expected str'
+        if not isinstance(region,str): raise(TypeError('data type incorrect for region, expected str')) 
 
         hub_stations = {}
 
@@ -142,7 +142,7 @@ class RailNetwork:
                 closest_hub = station
             elif min == 1e7:
                 closest_hub = []
-                print('No hub in region')
+                print('No hub in region') #no need since error is in hub_stations
 
         return closest_hub
 
