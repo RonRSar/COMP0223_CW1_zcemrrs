@@ -142,7 +142,7 @@ class RailNetwork:
                 closest_hub = station
             elif min == 1e7:
                 closest_hub = []
-                print('No hub in region') #no need since error is in hub_stations
+                print('No hub in region') #no need since error is in hub_stations, but left in for readability
 
         return closest_hub
 
@@ -194,6 +194,8 @@ class RailNetwork:
             distance = self.stations[start].distance_to(self.closest_hub(self.stations[start]))
             hubs_in_dest_region = len(self.hub_stations(self.closest_hub(self.stations[start]).region))
             journey_fare += fare_price(distance, 0, hubs_in_dest_region)
+            if len(journey) == 3:
+                journey_fare += -1 #account for 3 leg hub to station and station to hub behaviour
 
             if self.closest_hub(self.stations[start]).region == self.stations[dest].region: # 3 leg case- start/end xor hub 
                 distance = self.closest_hub(self.stations[start]).distance_to(self.stations[dest])
@@ -212,7 +214,7 @@ class RailNetwork:
                 distance = self.closest_hub(self.stations[dest]).distance_to(self.stations[dest])
                 #dr is 0
                 hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
-                journey_fare += fare_price(distance, 0, hubs_in_dest_region)
+                journey_fare += fare_price(distance, 0, hubs_in_dest_region) 
         
 
 

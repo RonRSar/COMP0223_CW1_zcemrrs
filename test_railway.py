@@ -80,7 +80,7 @@ def test_distance_to_duplicate():
 
 # [Done] Tests for RailNetwork simple information functions (3 marks)
 
-#set up a miscellaneous network with managable data
+#set up a miscellaneous network with managable data: 6 stations, 3 regions, 2 hubs
 abbey_wood = Station('Abbey Wood', 'London', 'ABW', 51.490719, 0.120343, 0)
 aberdeen = Station('Aberdeen', 'Scotland','ABD', 57.143127, -2.097464, 1)
 acton_central = Station('Acton Central', 'London', 'ACC', 57.143127, -2.097464, 0)
@@ -96,7 +96,7 @@ def test_rail_regions():
 def test_rail_station_number():
    assert misc_network.n_stations() == 6
 
-# ∘ Tests for the hub_stations and closest_hub methods (4 marks)
+# [Done] Tests for the hub_stations and closest_hub methods (4 marks)
 
 def test_rail_hub_stations():
    assert len(misc_network.hub_stations()) == 2
@@ -119,7 +119,36 @@ def test_closest_hub_no_hubs():
 def test_closest_hub_for_hub():
    assert misc_network.closest_hub(aberdeen) == aberdeen #closest hub to hub is itself
  
-# ∘ Tests for the journey_planner and journey_fare methods (6 marks)
+# [Done] Tests for the journey_planner and journey_fare methods (6 marks)
+
+def test_journey_planner_2_legs():
+   kirkcaldy_to_aberdeen = [kirkcaldy, aberdeen]
+   assert kirkcaldy_to_aberdeen == misc_network.journey_planner(kirkcaldy.crs, aberdeen.crs)
+
+def test_journey_planner_3_legs():
+   kirkcaldy_to_kings_cross = [kirkcaldy, aberdeen, kings_cross]
+   assert kirkcaldy_to_kings_cross == misc_network.journey_planner(kirkcaldy.crs, kings_cross.crs)
+
+def test_journey_planner_4_legs():
+   kirkcaldy_to_abbey_wood = [kirkcaldy, aberdeen, kings_cross, abbey_wood]   
+   assert kirkcaldy_to_abbey_wood == misc_network.journey_planner(kirkcaldy.crs, abbey_wood.crs)
+
+#impossible journeys are already flagged by closest hub
+
+def test_journey_fare_2_legs():
+   fare_price_kircaldy_to_aberdeen = fare_price(kirkcaldy.distance_to(aberdeen), 0, 1)
+   assert fare_price_kircaldy_to_aberdeen == approx(misc_network.journey_fare(kirkcaldy.crs, aberdeen.crs))
+
+def test_journey_fare_3_legs():
+   fare_price_kings_cross_to_kirkcaldy = fare_price(kings_cross.distance_to(aberdeen),1,1)
+   fare_price_kings_cross_to_kirkcaldy += fare_price(aberdeen.distance_to(kirkcaldy),0,1)
+   assert fare_price_kings_cross_to_kirkcaldy == approx(misc_network.journey_fare(kings_cross.crs, kirkcaldy.crs))
+
+def test_journey_fare_4_legs():
+   fare_price_kirkcaldy_to_abbey_wood = fare_price(kirkcaldy.distance_to(aberdeen),0,1)
+   fare_price_kirkcaldy_to_abbey_wood += fare_price(aberdeen.distance_to(kings_cross),1,1)
+   fare_price_kirkcaldy_to_abbey_wood += fare_price(kings_cross.distance_to(abbey_wood),0,1)
+   assert fare_price_kirkcaldy_to_abbey_wood == approx(misc_network.journey_fare(kirkcaldy.crs,abbey_wood.crs))
 
 
 # ∘ Tests for the plot_fare_to method (2 marks)
