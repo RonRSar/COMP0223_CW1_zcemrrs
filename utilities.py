@@ -9,26 +9,18 @@ def read_rail_network(filepath):
     assert isinstance(filepath, Path) , 'data type incorrect for filepath'
 
     reader = open(filepath, newline='')
-    stations = csv.reader(reader, delimiter=',')
-
-    stations_list = list(stations) #making into list as csv.reader is not iterable
+    stations = csv.DictReader(reader, delimiter=',')
 
     network_stations = []
-    for row in stations_list[1:]: # 0th element is header
-        CRS, Name, Coords_lat, Coords_long, Region, Hub = [cell for cell in zip(row)] #To Do: Generalise
-        
-        #converting from tuple
-        CRS = str(CRS)
-        Name = str(Name)
-        Coords_lat = str(Coords_lat)
-        Coords_long = str(Coords_long)
-        Region = str(Region)
-        Hub = str(Hub)
-
-        #stripping extra information
-        network_stations.append(Station(name=Name.strip('\'(\',)'), region=Region.strip('\'(\',)'), crs=CRS.strip('\'(\',)'),
-                                        lat=float(Coords_lat.strip('\'(\',)')), lon=float(Coords_long.strip('\'(\',)')), 
-                                        hub=bool(Hub.strip('\'(\',)'))))
+    for row in stations: 
+        Name = row['name'] #assignment is based on csv headers, and not specific to csv format
+        Region = row['region']
+        CRS = row['crs']
+        Coords_lat = float(row['latitude'])
+        Coords_long = float(row['longitude'])
+        Hub = row['hub']
+        station = Station(Name, Region, CRS, Coords_lat, Coords_long, Hub)
+        network_stations.append(station)
         
     rail_network = RailNetwork(network_stations)
 
