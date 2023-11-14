@@ -6,6 +6,8 @@ def fare_price(distance:float, different_regions:int, hubs_in_dest_region:int):
     '''
     Function to calculate the fare_price based on the direct distance between stations, region and number of hubs in region
     '''
+    assert different_regions == 0 or different_regions == 1, 'Different Regions must be 0 or 1'
+
     fare_price = 1 + distance*math.exp(-distance/100)*(1+(different_regions*hubs_in_dest_region)/10)
     return fare_price
 
@@ -47,6 +49,8 @@ class Station:
 
 
     def distance_to(self, other_station):
+
+        
         #splitting equation for easier readability and error checking
         lat_dif = (other_station.lat - self.lat)*0.5
         lon_dif = (other_station.lon - self.lon)*0.5
@@ -69,8 +73,7 @@ class RailNetwork:
             keys.append(self.stations[row].crs)
 
         #ensure no duplicate CRS    
-        assert len(keys) == len(set(keys)), 'There are duplicate CRS values, no stations can have the same identifier.'
-
+        if len(keys) != len(set(keys)): raise(KeyError('There are duplicate CRS values, no stations can have the same identifier.')) 
         stations_dict = {}
         count = 0
         for station in self.stations:
