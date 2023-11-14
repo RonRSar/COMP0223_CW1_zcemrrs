@@ -234,9 +234,8 @@ class RailNetwork:
         fares = []
         for station in self.stations.values(): 
             if crs_code != station.crs: #ensure not checking self
-                # if [station.region in self.hub_stations()]: #ensure station can be travelled to
-                fares.append(self.journey_fare(station.crs, crs_code))
-                # continue
+                if [station.region in self.hub_stations()]: #ensure station can be travelled to
+                    fares.append(self.journey_fare(station.crs, crs_code))
             continue
         
         station_name = self.stations[crs_code].name.replace(" ", "_")
