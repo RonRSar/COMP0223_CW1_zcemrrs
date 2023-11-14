@@ -151,6 +151,8 @@ class RailNetwork:
         '''
         Function takes the start and destination stations as crs inputs and returns a list of stations in the journey from start to end
         '''
+        if not (isinstance(start, str) or isinstance(dest, str)): raise(TypeError('crs must be 3 letter string'))
+        if not (len(start) == 3 and len(dest) == 3): raise(ValueError('crs must be 3 letter string'))
 
         # find closest hub
         start_closest_hub = self.closest_hub(self.stations[start])

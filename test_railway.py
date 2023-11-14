@@ -123,6 +123,14 @@ def test_closest_hub_for_hub():
  
 # [Done] Tests for the journey_planner and journey_fare methods (6 marks)
 
+def test_journey_planner_type():
+   with raises(TypeError, match='crs must be 3 letter string'):
+      misc_network.journey_planner(1,2)
+
+def test_journey_planner_crs_length():
+   with raises(ValueError, match='crs must be 3 letter string'):
+      misc_network.journey_planner('abcd','wxyz')
+
 def test_journey_planner_2_legs():
    kirkcaldy_to_aberdeen = [kirkcaldy, aberdeen]
    assert kirkcaldy_to_aberdeen == misc_network.journey_planner(kirkcaldy.crs, aberdeen.crs)
