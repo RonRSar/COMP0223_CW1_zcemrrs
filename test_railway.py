@@ -49,7 +49,6 @@ def test_station_hub():
         Station('a','b','abc',0.,0.,-2)
         Station('a','b','abc',0.,0.,53)
 
-
 def test_crs_unique():
    station_1 = Station('a','b','abc',0.,0.,0)
    station_2 = Station('x','y','abc',0.,0.,0)
@@ -67,6 +66,13 @@ def test_distance_to():
                     ((math.cos(station_1.lat*math.pi/180)*math.cos(station_2.lat*math.pi/180))*(math.sin(lon_dif*math.pi/180))**2))))
    
    assert dist_1_to_2 == approx(station_1.distance_to(station_2))
+
+def test_distance_to_duplicate():
+   station_1 = Station('a','b','abc',1.,-1.,0)
+   station_2 = Station('x','y','xyz',1.,-1.,0)
+
+   assert station_1.distance_to(station_2) == 0.
+
 
 
 
@@ -91,7 +97,7 @@ def test_distance_to():
 # [Done] At least one test for the fare_price function (1 mark)
 # [Done] At least four negative tests, checking the handling of improper inputs to Station (4 marks)
 # [Done] A test to check that CRS codes loaded into a RailNetwork are unique (1 mark)
-# ∘ Test Station class distance_to method (2 marks)
+# [Done] Test Station class distance_to method (2 marks)
 # ∘ Tests for RailNetwork simple information functions (3 marks)
 # ∘ Tests for the hub_stations and closest_hub methods (4 marks)
 # ∘ Tests for the journey_planner and journey_fare methods (6 marks)

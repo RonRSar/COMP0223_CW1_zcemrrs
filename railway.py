@@ -49,8 +49,6 @@ class Station:
 
 
     def distance_to(self, other_station):
-
-        
         #splitting equation for easier readability and error checking
         lat_dif = (other_station.lat - self.lat)*0.5
         lon_dif = (other_station.lon - self.lon)*0.5
@@ -61,6 +59,10 @@ class Station:
         
         R = 6371 #declaring R as constant in case earth explodes and loses width
         distance = abs(2*R*math.asin(k_1)) #abs to prevent negative distances
+
+        if self == other_station:
+            distance = 0 #account for case where stations are the same, but don't flag error
+            
         return distance
 
 
