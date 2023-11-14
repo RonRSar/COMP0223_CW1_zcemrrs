@@ -146,6 +146,7 @@ class RailNetwork:
         '''
         Function takes the start and destination stations as crs inputs and returns a list of stations in the journey from start to end
         '''
+
         # find closest hub
         start_closest_hub = self.closest_hub(self.stations[start])
         end_closest_hub = self.closest_hub(self.stations[dest]) 
@@ -160,7 +161,8 @@ class RailNetwork:
         if end_closest_hub != self.stations[dest] and end_closest_hub.region != start_closest_hub.region:
             journey.append(end_closest_hub)
 
-        journey.append(self.stations[dest]) #end is always included
+        if self.stations[start] != self.stations[dest]:
+            journey.append(self.stations[dest]) #end is included if start != end
 
         return journey
         
@@ -172,7 +174,7 @@ class RailNetwork:
         '''
 
         journey = self.journey_planner(start, dest)
-        journey_fare = 0
+        journey_fare = 0 #if 1 leg, then no cost
 
         if len(journey) == 2: # for simple 2 leg case
             distance = self.stations[start].distance_to(self.stations[dest])
@@ -188,12 +190,16 @@ class RailNetwork:
             hubs_in_dest_region = len(self.hub_stations(self.closest_hub(self.stations[start]).region))
             journey_fare += fare_price(distance, 0, hubs_in_dest_region)
 
-            if self.closest_hub(self.stations[start]).region == self.stations[dest].region: # 3 leg case
+            if self.closest_hub(self.stations[start]).region == self.stations[dest].region: # 3 leg case- start/end xor hub 
                 distance = self.closest_hub(self.stations[start]).distance_to(self.stations[dest])
+                if self.closest_hub(self.stations[start]).region == self.stations[dest].region:
+                    different_regions = 0
+                else:
+                    different_regions = 1
                 hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region))
-                journey_fare += fare_price(distance, 0, hubs_in_dest_region)
+                journey_fare += fare_price(distance, different_regions, hubs_in_dest_region)
 
-            elif self.closest_hub(self.stations[start]).region != self.stations[dest].region: # 4 leg case
+            elif self.closest_hub(self.stations[start]).region != self.stations[dest].region: # 4 leg case- middle 2 are hubs
                 distance = self.closest_hub(self.stations[start]).distance_to(self.closest_hub(self.stations[dest]))
                 #dr is 1
                 hubs_in_dest_region = len(self.hub_stations(self.stations[dest].region)) #hub in dest region is same region as dest
@@ -217,7 +223,7 @@ class RailNetwork:
                 if i != len(journey) - 1: #for entering arrows 
                     journey_disp += ' -> '
 
-            return f"Journey from: {self.stations[start].name} ({start}) to {self.stations[dest].name} ({dest})\n" f"Route: {journey_disp} \n" f"Fare: £{round(journey_fare, 2)}"
+            return f"Journey from: {self.stations[start].name} ({start}) to {self.stations[dest].name} ({dest})\n" f"Route: {journey_disp} \n" f"Fare: £{round(journey_fare, 2):.2f}"
         else:
             return journey_fare
         
@@ -236,7 +242,6 @@ class RailNetwork:
             if crs_code != station.crs: #ensure not checking self
                 if [station.region in self.hub_stations()]: #ensure station can be travelled to
                     fares.append(self.journey_fare(station.crs, crs_code))
-            continue
         
         station_name = self.stations[crs_code].name.replace(" ", "_")
         plt.title(f"Fare prices to {station_name}")
