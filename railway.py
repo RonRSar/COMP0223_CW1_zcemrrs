@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import math 
 
 
-def fare_price(distance, different_regions, hubs_in_dest_region):
+def fare_price(distance:float, different_regions:int, hubs_in_dest_region:int):
     '''
     Function to calculate the fare_price based on the direct distance between stations, region and number of hubs in region
     '''
@@ -11,7 +11,7 @@ def fare_price(distance, different_regions, hubs_in_dest_region):
 
 
 class Station:
-    def __init__(self, name, region, crs, lat, lon, hub):
+    def __init__(self, name:str, region:str, crs:str, lat:float, lon:float, hub:{int,bool}):
         self.name = name
         self.region = region                
         self.crs = crs
@@ -61,7 +61,7 @@ class Station:
 
 
 class RailNetwork:
-    def __init__(self, stations):
+    def __init__(self, stations:list):
         self.stations = stations #station input is list
 
         keys = [] #CRS are unique identifiers
@@ -142,7 +142,7 @@ class RailNetwork:
         return closest_hub
 
     
-    def journey_planner(self, start, dest):
+    def journey_planner(self, start:str, dest:str):
         '''
         Function takes the start and destination stations as crs inputs and returns a list of stations in the journey from start to end
         '''
@@ -167,7 +167,7 @@ class RailNetwork:
         return journey
         
 
-    def journey_fare(self, start, dest, summary=False):
+    def journey_fare(self, start:str, dest:str, summary=False):
         '''
         Function takes start and destination as crs values and returns the cost of the journey. 
         Summary is true to output more information and show the journey passage. 
@@ -230,7 +230,7 @@ class RailNetwork:
         
 
 
-    def plot_fares_to(self, crs_code, save, **args):
+    def plot_fares_to(self, crs_code:str, save:bool, **args):
         """
         Function to plot all fares to one specific station. 
         Takes crs_code of station as input and produces histogram of fare prices from all other stations
