@@ -244,10 +244,12 @@ class RailNetwork:
         save is true for image to be saved locally to computer
         **args are used for the hist plot
         """
+        if not isinstance(save, bool): raise TypeError('save must be bool')
+
         fares = []
         for station in self.stations.values(): 
             if crs_code != station.crs: #ensure not checking self
-                if [station.region in self.hub_stations()]: #ensure station can be travelled to
+                if [station.region in self.hub_stations().keys()]: #ensure station can be travelled to
                     fares.append(self.journey_fare(station.crs, crs_code))
         
         station_name = self.stations[crs_code].name.replace(" ", "_")
@@ -255,17 +257,17 @@ class RailNetwork:
         plt.xlabel("Fare price (Pound)")
 
         if args != None: 
-            plt.hist(fares, **args)
+           fig = plt.hist(fares, **args)
         else:
-            plt.hist(fares)
+           fig = plt.hist(fares)
 
         if save:
-            plt.savefig(f"./Fare_prices_to_{station_name}.png")
+           fig = plt.savefig(f"./Fare_prices_to_{station_name}.png")
         
         plt.waitforbuttonpress(0)
 
         
-        return
+        return fig
 
     def plot_network(self, marker_size: int = 5) -> None:
         """

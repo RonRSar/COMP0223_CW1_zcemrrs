@@ -3,6 +3,7 @@
 from pytest import raises, approx
 import math
 from pathlib import Path
+import matplotlib.pyplot as plt
 from utilities import read_rail_network
 from railway import fare_price, Station, RailNetwork
 
@@ -151,7 +152,21 @@ def test_journey_fare_4_legs():
    assert fare_price_kirkcaldy_to_abbey_wood == approx(misc_network.journey_fare(kirkcaldy.crs,abbey_wood.crs))
 
 
-# ∘ Tests for the plot_fare_to method (2 marks)
+# [Done] Tests for the plot_fare_to method (2 marks)
+
+def test_plot_fares_to_save_bool():
+   with raises(TypeError, match='save must be bool'):
+      misc_network.plot_fares_to('KGX', save=1)
+
+def test_plot_fares_to_save():
+   del misc_network.stations['YSR']  #to avoid Wales flagging the plot
+   misc_network.plot_fares_to('KGX', save=True)
+   assert Path(f"./Fare_prices_to_London_Kings_Cross.png").exists() == True
+
+def test_plot_fares_to_other_args():
+   fig, ax = plt.subplots(figsize=(5,5))
+   misc_network.plot_fares_to('KGX', save=False, ec='red') #no error
+
 
 
 
