@@ -8,6 +8,32 @@ from railway import Station, RailNetwork
 network_csv = Path("uk_stations.csv")
 rail_network = read_rail_network(network_csv)
 
+def test_station():
+    with raises(TypeError, match = 'data type incorrect for Station name, expected str'): #check Station name is str
+       Station(1,'b','abc',0.,0.,0)
+    with raises(TypeError, match = 'data type incorrect for Station region, expected str'): #check Station region is str
+       Station('a',2,'abc',0.,0.,0)
+    with raises(TypeError, match = 'data type incorrect for Station CRS, expected str'): #check Station CRS is str
+       Station('a','b',123,0.,0.,0)
+    with raises(TypeError, match='data type incorrect for Latitude, expected numeric'): #check lat is numeric
+       Station('a','b','abc','x',0.,0)
+    with raises(TypeError, match='data type incorrect for Longitude, expected numeric'): #check lon is numeric
+       Station('a','b','abc',lat=0., lon='err',hub=0)
+
+    with raises(AssertionError, match= "CRS is incorrect length, expected 3 letters"): #check crs is 3 letters
+     Station('a','b','c',0.,0.,0)
+    with raises(ValueError, match='Latitude is not in -90 to 90 range'): #check lat range
+       Station('a','b','abc',-91.,0.,0)
+       Station('a','b','abc',91.,0.,0)
+    with raises(ValueError, match='Longitude is not in -180 to 180 range'): #check lon range
+       Station('a','b','abc',0.,-181.,0)
+       Station('a','b','abc',0.,181.,0)
+    with raises(AssertionError, match='input incorrect for hub, expected bool or 0/1' ): #check hub
+        Station('a','b','abc',0.,0.,-2)
+        Station('a','b','abc',0.,0.,53)
+
+        
+
 
 #call pytest from bash terminal
 #pytest functions have to have test in them. 
