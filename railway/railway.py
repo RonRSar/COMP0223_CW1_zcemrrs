@@ -168,8 +168,7 @@ class RailNetwork:
         if end_closest_hub != self.stations[dest] and end_closest_hub.region != start_closest_hub.region:
             journey.append(end_closest_hub)
 
-        if self.stations[start] != self.stations[dest]:
-            journey.append(self.stations[dest]) #end is included if start != end
+        journey.append(self.stations[dest]) #end is included due to 'clerical error in assignment'
 
         return journey
         
