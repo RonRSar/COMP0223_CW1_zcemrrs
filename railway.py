@@ -85,7 +85,6 @@ class RailNetwork:
         #convert stations to dictionary
         self.stations = stations_dict
 
-
     def regions(self):
         '''
         Function finds the unique regions in a rail network
@@ -97,6 +96,7 @@ class RailNetwork:
         unique_regions = list(set(region_list)) #set finds unique regions in list
         return unique_regions
 
+    @property
     def n_stations(self):
         '''
         Function counts number of stations in rail network
