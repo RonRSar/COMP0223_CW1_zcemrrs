@@ -6,13 +6,14 @@ from pathlib import Path
 from utilities import read_rail_network
 from railway import fare_price, Station, RailNetwork
 
-network_csv = Path("uk_stations.csv")
-rail_network = read_rail_network(network_csv)
+# [Done] At least one test for the fare_price function (1 mark)
 
-def test_fare_price():
+def test_fare_price(): 
    assert round(fare_price(1,0,0),2) == approx(1.99)
    with raises(AssertionError, match = 'Different Regions must be 0 or 1'): #check diff regions is 1 or 0 only
      fare_price(1,2,3)
+
+# [Done] At least four negative tests, checking the handling of improper inputs to Station (4 marks)
 
 def test_station_name_type():
     with raises(TypeError, match = 'data type incorrect for Station name, expected str'): #check Station name is str
@@ -49,11 +50,15 @@ def test_station_hub():
         Station('a','b','abc',0.,0.,-2)
         Station('a','b','abc',0.,0.,53)
 
+# [Done] A test to check that CRS codes loaded into a RailNetwork are unique (1 mark)
+
 def test_crs_unique():
    station_1 = Station('a','b','abc',0.,0.,0)
    station_2 = Station('x','y','abc',0.,0.,0)
    with raises(KeyError, match='There are duplicate CRS values, no stations can have the same identifier.'):
     RailNetwork([station_1,station_2])
+
+# [Done] Test Station class distance_to method (2 marks)
 
 def test_distance_to():
    station_1 = Station('a','b','abc',10.,-10.,0)
@@ -73,35 +78,39 @@ def test_distance_to_duplicate():
 
    assert station_1.distance_to(station_2) == 0.
 
-
-
-
-
-
-
-#call pytest from bash terminal
-#pytest functions have to have test in them. 
-
-# From assignment
-# Errors with appropriate error messages are thrown when invalid values are encountered (see Reading
-# and validating data section above)
-# • The Station methods work correctly
-# • For the RailNetwork class:
-# ∘ The methods and properties providing simple information about the collection work correctly.
-# ∘ The hub_stations and closest_hub methods work as intended, in the case of
-# hub_stations including the case when it is passed optional arguments.
-# ∘ journey_planner correctly determines the journeys to be taken between stations.
-# ∘ journey_fare correctly determines the fare prices for journeys of different numbers of legs.
-
-# • Tests (23%)
-# [Done] At least one test for the fare_price function (1 mark)
-# [Done] At least four negative tests, checking the handling of improper inputs to Station (4 marks)
-# [Done] A test to check that CRS codes loaded into a RailNetwork are unique (1 mark)
-# [Done] Test Station class distance_to method (2 marks)
 # ∘ Tests for RailNetwork simple information functions (3 marks)
+abbey_wood = Station('Abbey Wood', 'London', 'ABW', 51.490719, 0.120343, 0)
+aberdeen = Station('Aberdeen', 'Scotland','ABD', 57.143127, -2.097464, 1)
+acton_central = Station('Acton Central', 'London', 'ACC', 57.143127, -2.097464, 0)
+kirkcaldy = Station('Kirkcaldy','Scotland','KDY', 56.112579, -3.167445, 0)
+kings_cross = Station('London Kings Cross', 'London', 'KGX',51.530827, -0.122907, 1)
+
+misc_network = RailNetwork([abbey_wood, aberdeen, acton_central, kirkcaldy, kings_cross])
+
+def test_rail_regions():
+   assert len(misc_network.regions()) == 2
+
+def test_rail_station_number():
+   assert misc_network.n_stations() == 5
+
 # ∘ Tests for the hub_stations and closest_hub methods (4 marks)
+
+
 # ∘ Tests for the journey_planner and journey_fare methods (6 marks)
+
+
 # ∘ Tests for the plot_fare_to method (2 marks)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
