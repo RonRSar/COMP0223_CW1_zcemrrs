@@ -11,6 +11,8 @@ from railway import fare_price, Station, RailNetwork
 
 def test_fare_price(): 
    assert round(fare_price(1,0,0),2) == approx(1.99)
+
+def test_fare_price_regions():
    with raises(AssertionError, match = 'Different Regions must be 0 or 1'): #check diff regions is 1 or 0 only
      fare_price(1,2,3)
 
@@ -75,9 +77,8 @@ def test_distance_to():
 
 def test_distance_to_duplicate():
    station_1 = Station('a','b','abc',1.,-1.,0)
-   station_2 = Station('x','y','xyz',1.,-1.,0)
 
-   assert station_1.distance_to(station_2) == 0.
+   assert station_1.distance_to(station_1) == 0.
 
 # [Done] Tests for RailNetwork simple information functions (3 marks)
 
@@ -115,7 +116,7 @@ def test_closest_hub():
 
 def test_closest_hub_no_hubs():
    with raises(KeyError):
-      misc_network.closest_hub(ystrad_rhondda) #no other stations in Wales, error is in earlier funcion already
+      misc_network.closest_hub(ystrad_rhondda) #no other stations in Wales, error is in hub_stations but also flagged here
 
 def test_closest_hub_for_hub():
    assert misc_network.closest_hub(aberdeen) == aberdeen #closest hub to hub is itself
@@ -126,7 +127,11 @@ def test_journey_planner_2_legs():
    kirkcaldy_to_aberdeen = [kirkcaldy, aberdeen]
    assert kirkcaldy_to_aberdeen == misc_network.journey_planner(kirkcaldy.crs, aberdeen.crs)
 
-def test_journey_planner_3_legs():
+def test_journey_planner_3_legs_hub_start():
+   aberdeen_to_abbey_wood = [aberdeen, kings_cross, abbey_wood]
+   assert aberdeen_to_abbey_wood == misc_network.journey_planner(aberdeen.crs, abbey_wood.crs)
+
+def test_journey_planner_3_legs_hub_end():
    kirkcaldy_to_kings_cross = [kirkcaldy, aberdeen, kings_cross]
    assert kirkcaldy_to_kings_cross == misc_network.journey_planner(kirkcaldy.crs, kings_cross.crs)
 
@@ -134,16 +139,21 @@ def test_journey_planner_4_legs():
    kirkcaldy_to_abbey_wood = [kirkcaldy, aberdeen, kings_cross, abbey_wood]   
    assert kirkcaldy_to_abbey_wood == misc_network.journey_planner(kirkcaldy.crs, abbey_wood.crs)
 
-#impossible journeys are already flagged by closest hub
+#impossible journeys are already flagged earlier so no need to test here
 
 def test_journey_fare_2_legs():
    fare_price_kircaldy_to_aberdeen = fare_price(kirkcaldy.distance_to(aberdeen), 0, 1)
    assert fare_price_kircaldy_to_aberdeen == approx(misc_network.journey_fare(kirkcaldy.crs, aberdeen.crs))
 
-def test_journey_fare_3_legs():
+def test_journey_fare_3_legs_hub_start():
    fare_price_kings_cross_to_kirkcaldy = fare_price(kings_cross.distance_to(aberdeen),1,1)
    fare_price_kings_cross_to_kirkcaldy += fare_price(aberdeen.distance_to(kirkcaldy),0,1)
    assert fare_price_kings_cross_to_kirkcaldy == approx(misc_network.journey_fare(kings_cross.crs, kirkcaldy.crs))
+
+def test_journey_fare_3_legs_hub_end():
+   fare_price_acton_central_to_aberdeen = fare_price(acton_central.distance_to(kings_cross),0,1)
+   fare_price_acton_central_to_aberdeen += fare_price(kings_cross.distance_to(aberdeen),1,1)
+   assert fare_price_acton_central_to_aberdeen == approx(misc_network.journey_fare(acton_central.crs, aberdeen.crs))
 
 def test_journey_fare_4_legs():
    fare_price_kirkcaldy_to_abbey_wood = fare_price(kirkcaldy.distance_to(aberdeen),0,1)
